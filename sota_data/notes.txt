@@ -1,0 +1,62 @@
+FULL DATABASE RESET - full_reset_sota_data.sql -- file is located in sota_tracking/sota_data/
+This script is used to do a hard database reset, it kills active connections, drops the DB, and recreates it.
+Execute to completely rebuild the DB manually (outside of Spring Boot).
+
+Run manually with the following command in psql by opening a terminal the sota_data/ sub dir where the full_reset_sota_data.sql
+file is located  and run the following command: (NOTE: postgres password is "admin")
+
+psql -U postgres -f full_reset_sota_data.sql
+
+Run it before switching between the clean or dev profiles below, or when the schema changes significantly.
+----------------------------------------------------------------------------------------
+CLEAN DATABASE SCHEMA - WILL NOT DELETE EXISTING DATA - application-clean.properties
+This profile can be run in SpringBoot or in a terminal.
+It ensures that the schema exists, but does not drop tables or load data if they already exist.
+Ideal for developing business logic without destroying your existing data.
+
+in terminal run - mvn spring-boot:run "-Dspring.profiles.active=clean"
+in Intellij run configuration RUN entry enter the following in Java Options > VM Options- -Dspring.profiles.active=clean
+----------------------------------------------------------------------------------------
+FRESH DATABASE SCHEMA AND BASIC SEED TEST DATA - WILL DELETE EXISTING DATA!! - application-dev.properties
+This profile can be run in SpringBoot or in a terminal.
+It ensures that a fresh schema and basic seed data are loaded each time (for testing).
+It drops the existing tables, recreates them, and then populates them with sample data
+Ideal for ongoing development with a fresh database schema and data.
+
+in terminal run - mvn spring-boot:run "-Dspring.profiles.active=dev"
+in the Intellij Run Configuration RUN entry, enter the following in Java Options > VM Options - -Dspring.profiles.active=dev
+----------------------------------------------------------------------------------------
+NO DATABASE MODIFICATIONS - DEFAULT RUN APP ONLY application-default.properties
+This profile can be run in SpringBoot or in a terminal.
+It simply runs the app and does not touch the database schema or data
+Ideal for ongoing development with existing database schema and data.
+
+in terminal run - mvn spring-boot:run "-Dspring.profiles.active=default"
+
+------------------------------------------------------------------------------------------------
+
+misc. (delete if un-necessary)
+starting the sota application
+
+run the following command from a terminal from the project root - THIS WILL DELETE ALL DATA AND START FRESH!!
+psql -U postgres -f sota_data/full_reset_sota_data.sql
+psql -U postgres -f full_reset_sota_data.sql
+
+
+you will be prompted to enter the database password 'admin' or whatever.
+
+START THE BACK END CODE
+
+from a terminal in the project rood dir (where the pom.xml file lives) execute the following
+
+mvn spring-boot:run "-Dspring.profiles.active=dev"  (the quotes are required for Windows not linux)
+
+---------------------------------------
+
+spring.sql.init.mode=never
+
+# Simply rebuilds and runs the application and does not touch the database.
+# IT WILL LEAVE an existing database schema and data if it already exists
+
+
+
